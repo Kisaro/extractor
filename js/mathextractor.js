@@ -1,7 +1,10 @@
 var MathExtractor = function() {};
 MathExtractor.prototype.name = 'MathExtractor';
 MathExtractor.prototype.results = [];
-MathExtractor.prototype.init = function() {};
+MathExtractor.prototype.clipboard = null;
+MathExtractor.prototype.init = function() {
+	MathExtractor.prototype.clipboard = require('clipboard');
+};
 MathExtractor.prototype.onkeyup = function(query) {
 	MathExtractor.prototype.results = [];
 	var result = MathExtractor.prototype.calculate(query);
@@ -11,9 +14,7 @@ MathExtractor.prototype.onkeyup = function(query) {
 };
 MathExtractor.prototype.onaction = function(query, index) {
 	if(MathExtractor.prototype.results.length > 0) {
-		var gui = require('nw.gui');
-		var clipboard = gui.Clipboard.get();
-		clipboard.set(MathExtractor.prototype.results[0].toString(), 'text');
+		MathExtractor.prototype.clipboard.writeText(MathExtractor.prototype.results[0].toString());
 	}
 };
 MathExtractor.prototype.onsubaction = function(query, index) {};
@@ -52,3 +53,7 @@ MathExtractor.prototype.calculate = function(input) {
 			return parseFloat(input.trim());
 	}
 };
+
+module.exports = function() {
+	return MathExtractor;
+}

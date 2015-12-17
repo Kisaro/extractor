@@ -1,97 +1,79 @@
-var app = {
+var Extractor = {
 	extractors: [],
 	results: [],
+	win: null,
 	resultIndex: 0,
-	activateShortcut: null,
 	init: function() {
+		Extractor.win = require('remote').getCurrentWindow();
 		var search = document.getElementById('search');
-		app.extractors.push(new MathExtractor());
-		app.extractors.push(new FileExtractor());
-		for(var i = 0; i < app.extractors.length; i++) {
-			app.extractors[i].init();
+		Extractor.extractors.push(new MathExtractor());
+		Extractor.extractors.push(new FileExtractor());
+		for(var i = 0; i < Extractor.extractors.length; i++) {
+			Extractor.extractors[i].init();
 		}
-		app.controls(search);
+		Extractor.controls(search);
 		search.focus();
 	},
 	renderResults: function() {
 		var results = document.getElementById('results');
-		var gui = require('nw.gui');
-		var win = gui.Window.get();
 		var renderedResults = '';
-		for(var i = 0; i < app.results.length; i++) {
-			renderedResults += '<li>' + app.results[i] + '</li>';
+		for(var i = 0; i < Extractor.results.length; i++) {
+			renderedResults += '<li>' + Extractor.results[i] + '</li>';
 		}
 		results.innerHTML = renderedResults;
-		if(app.results.length > 0)
-			results.getElementsByTagName('li')[app.resultIndex].className = 'selected';
-		var baseHeight = 103;
-		//var baseHeight = 64;
-		win.height = baseHeight + app.results.length * 50 + (app.results.length > 1 ? 10 : 0);
+		if(Extractor.results.length > 0)
+			results.getElementsByTagName('li')[Extractor.resultIndex].className = 'selected';
+
+		var baseHeight = 101;
+		Extractor.win.setSize(Extractor.win.getSize()[0], baseHeight + Extractor.results.length * 50 + (Extractor.results.length > 1 ? 10 : 0));
 	},
 	controls: function(search) {
-		var gui = require('nw.gui');
-		app.activateShortcut = new gui.Shortcut({
-			key: "Ctrl+Shift+A",
-			active: function() {
-				console.log('yay');
-				//require('nw.gui').Window.get().minimize();
-			},
-			failed: function(msg) {
-				console.error(msg);
-			}
-		});
-		try {
-			gui.App.unregisterGlobalHotKey(app.activateShortcut);
-		} finally {
-			gui.App.registerGlobalHotKey(app.activateShortcut);
-		}
 		search.addEventListener('keyup', function(event) {
 			// Enter key
 			if(event.keyCode === 13) {
-				for(var i = 0; i < app.extractors.length; i++) {
+				for(var i = 0; i < Extractor.extractors.length; i++) {
 					if(event.shiftKey)
-						app.extractors[i].onsubaction(search.value, app.resultIndex);
+						Extractor.extractors[i].onsubaction(search.value, Extractor.resultIndex);
 					else
-						app.extractors[i].onaction(search.value, app.resultIndex);
-				} 
+						Extractor.extractors[i].onaction(search.value, Extractor.resultIndex);
+				}
 			}
 			// up arrow
 			else if(event.keyCode === 38) {
 				event.preventDefault();
-				if(app.results.length > 0) {
-					document.getElementById('results').getElementsByTagName('li')[app.resultIndex--].className = '';
-					if(app.resultIndex < 0)
-						app.resultIndex = 0;
-					document.getElementById('results').getElementsByTagName('li')[app.resultIndex].className = 'selected';
+				if(Extractor.results.length > 0) {
+					document.getElementById('results').getElementsByTagName('li')[Extractor.resultIndex--].className = '';
+					if(Extractor.resultIndex < 0)
+						Extractor.resultIndex = 0;
+					document.getElementById('results').getElementsByTagName('li')[Extractor.resultIndex].className = 'selected';
 				}
-				
+
 			}
 			//down arrow
 			else if(event.keyCode === 40) {
 				event.preventDefault();
-				if(app.results.length > 0) {
-					document.getElementById('results').getElementsByTagName('li')[app.resultIndex++].className = '';
-					if(app.resultIndex >= app.results.length)
-						app.resultIndex = app.results.length-1;
-					document.getElementById('results').getElementsByTagName('li')[app.resultIndex].className = 'selected';
+				if(Extractor.results.length > 0) {
+					document.getElementById('results').getElementsByTagName('li')[Extractor.resultIndex++].className = '';
+					if(Extractor.resultIndex >= Extractor.results.length)
+						Extractor.resultIndex = Extractor.results.length-1;
+					document.getElementById('results').getElementsByTagName('li')[Extractor.resultIndex].className = 'selected';
 				}
 			}
 			// ESC
 			else if(event.keyCode === 27) {
 				event.preventDefault();
-				gui.Window.get().minimize();
+				Extractor.win.hide();
 			}
 			else {
-				app.results = [];
-				app.resultIndex = 0;
-				for(var i = 0; i < app.extractors.length; i++) {
-					app.extractors[i].onkeyup(search.value.trim());
-					app.results = app.results.concat(app.extractors[i].results);
+				Extractor.results = [];
+				Extractor.resultIndex = 0;
+				for(var i = 0; i < Extractor.extractors.length; i++) {
+					Extractor.extractors[i].onkeyup(search.value.trim());
+					Extractor.results = Extractor.results.concat(Extractor.extractors[i].results);
 				}
-				app.renderResults();
+				Extractor.renderResults();
 			}
 		});
 	}
-}
-
-app.init();
+};
+Extractor.init();
