@@ -1,6 +1,7 @@
 var MathExtractor = function() {};
 MathExtractor.prototype.name = 'MathExtractor';
 MathExtractor.prototype.results = [];
+MathExtractor.prototype.init = function() {};
 MathExtractor.prototype.onkeyup = function(query) {
 	MathExtractor.prototype.results = [];
 	var result = MathExtractor.prototype.calculate(query);
@@ -8,14 +9,14 @@ MathExtractor.prototype.onkeyup = function(query) {
 		MathExtractor.prototype.results.push(result);
 	}
 };
-MathExtractor.prototype.onaction = function(query) {
+MathExtractor.prototype.onaction = function(query, index) {
 	if(MathExtractor.prototype.results.length > 0) {
 		var gui = require('nw.gui');
 		var clipboard = gui.Clipboard.get();
 		clipboard.set(MathExtractor.prototype.results[0].toString(), 'text');
 	}
 };
-MathExtractor.prototype.onsubaction = function(query) {};
+MathExtractor.prototype.onsubaction = function(query, index) {};
 
 MathExtractor.prototype.calculate = function(input) {
 	if(input.match(/[0-9.*/+-]*sqrt\([0-9.*/+()-]+?\).*/)) {

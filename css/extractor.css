@@ -39,16 +39,29 @@ body, #search {
 
 ul#results {
 	padding: 0;
+	margin: 0;
+	width: 100%;
 }
 #results li {
+	float: left;
+	width: calc(100% - 20px);
 	display: block;
 	line-height: 40px;
 	height: 40px;
-	width: 96%;
 	padding: 0 10px;
 	background-color: #fff;
-	margin: 2%;
+	margin: 10px 10px 0;
 	box-shadow: 0 1px 5px #666;
 	box-sizing: border-box;
-	-webkit-animation: fadeIn linear .5s;
+	color: #666;
+	transition: all .2s;
+	/*-webkit-animation: fadeIn linear .5s;*/
+}
+#results li.selected {
+	color: #222;
+	margin: 0;
+	width: 100%;
+	line-height: 50px;
+	height: 50px;
+	transition: all .1s;
 }
