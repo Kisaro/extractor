@@ -12,16 +12,23 @@ app.on('window-all-closed', function() {
 });
 
 app.on('ready', function() {
-	mainWindow = new BrowserWindow({width: 800, height: 101, show: false, resizable: false});
+	mainWindow = new BrowserWindow({
+    width: 800,
+    height: 101,
+    show: true,
+    resizable: false,
+    'always-on-top': true
+  });
   mainWindow.setMenuBarVisibility(false);
 	mainWindow.loadURL('file://' + __dirname + '/index.html');
-  globalShortcut.register('Alt+Space', function() {
+  var config = require('./config');
+  globalShortcut.register(config.shortcut, function() {
     if(mainWindow.isVisible())
       mainWindow.hide();
     else
       mainWindow.show();
   });
-	//mainWindow.webContents.openDevTools();
+	mainWindow.webContents.openDevTools();
 	mainWindow.on('closed', function() {
 		mainWindow = null;
 	});

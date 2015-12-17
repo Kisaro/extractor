@@ -9,30 +9,37 @@ FileExtractor.prototype.init = function() {
 	FileExtractor.prototype.fs = require('fs');
 	FileExtractor.prototype.shell = require('shell');
 	var indexStart = Date.now();
-	FileExtractor.prototype.indexFiles('E:\\Video');
-	FileExtractor.prototype.indexFiles('E:\\Music');
-	FileExtractor.prototype.indexFiles('E:\\Picture');
-	FileExtractor.prototype.indexFiles('C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs');
+	var config = require('./config');
+	for(var i = 0; i < config.indexingPaths.length; i++)
+		FileExtractor.prototype.indexFiles(config.indexingPaths[i]);
 	console.log(FileExtractor.prototype.name + ': ' + FileExtractor.prototype.files.length + ' files indexed in ' + (Date.now() - indexStart)/1000.0 + 's.');
 };
 FileExtractor.prototype.onkeyup = function(query) {
 	FileExtractor.prototype.results = [];
 	var resultLimit = 10;
 	var subQueries = query.split(' ');
-	if(query.length > 0)
-		for(var i = 0; i < FileExtractor.prototype.files.length; i++) {
-			var matchAllQueries = true;
-			for(var j = 0; j < subQueries.length; j++)
-				if(FileExtractor.prototype.files[i].toLowerCase().indexOf(subQueries[j].toLowerCase()) === -1)
-					matchAllQueries = false;
-			if(FileExtractor.prototype.results.length >= resultLimit)
-				break;
-			else if(matchAllQueries)
-				FileExtractor.prototype.results.push(FileExtractor.prototype.files[i]);
+	if(query.length > 0) {
+		if(query.toLowerCase() === 'settings') {
+			FileExtractor.prototype.results.push('Settings');
 		}
+		else
+			for(var i = 0; i < FileExtractor.prototype.files.length; i++) {
+				var matchAllQueries = true;
+				for(var j = 0; j < subQueries.length; j++)
+					if(FileExtractor.prototype.files[i].toLowerCase().indexOf(subQueries[j].toLowerCase()) === -1)
+						matchAllQueries = false;
+				if(FileExtractor.prototype.results.length >= resultLimit)
+					break;
+				else if(matchAllQueries)
+					FileExtractor.prototype.results.push(FileExtractor.prototype.files[i]);
+			}
+	}
 };
 FileExtractor.prototype.onaction = function(query, index) {
-	if(index > -1 && index < FileExtractor.prototype.results.length)
+	var path = require('path');
+	if(query.toLowerCase() === 'settings')
+		FileExtractor.prototype.shell.showItemInFolder(FileExtractor.prototype.fs.realpathSync('.') + path.sep + 'config.js');
+	else if(index > -1 && index < FileExtractor.prototype.results.length)
 		FileExtractor.prototype.shell.openItem(FileExtractor.prototype.results[index]);
 };
 FileExtractor.prototype.onsubaction = function(query, index) {
@@ -40,9 +47,10 @@ FileExtractor.prototype.onsubaction = function(query, index) {
 		FileExtractor.prototype.shell.showItemInFolder(FileExtractor.prototype.results[index]);
 };
 FileExtractor.prototype.indexFiles = function(path) {
+	var p = require('path');
 	var files = FileExtractor.prototype.fs.readdirSync(path);
 	for(var i = 0; i < files.length; i++) {
-		var fullpath = path + '/' + files[i];
+		var fullpath = path + p.sep + files[i];
 		try {
 			FileExtractor.prototype.fs.accessSync(fullpath);
 		} catch(ex) {
