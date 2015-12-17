@@ -18,14 +18,16 @@ MathExtractor.prototype.onaction = function(query) {
 MathExtractor.prototype.onsubaction = function(query) {};
 
 MathExtractor.prototype.calculate = function(input) {
-	if(input.match(/^[0-9.*/+-]*\([0-9.*/+()-]+\).*/)) {
-		var iStart = input.indexOf('(');
-		var iEnd = input.indexOf(')');
-		return MathExtractor.prototype.calculate(input.substr(0,iStart) + MathExtractor.prototype.calculate(input.substr(iStart+1, iEnd)) + input.substr(iEnd+1));
-	} else if(input.match(/[0-9.*/+-]*sqrt\([0-9.*/+()-]+\).*/)) {
-		var iStart = input.indexOf('sqrt(');
-		var iEnd = input.indexOf(')');
-		return MathExtractor.prototype.calculate(input.substr(0,iStart) + Math.sqrt(MathExtractor.prototype.calculate(input.substr(iStart+5, iEnd))) + input.substr(iEnd+1));
+	if(input.match(/[0-9.*/+-]*sqrt\([0-9.*/+()-]+?\).*/)) {
+		var subCalculation = input.replace(/^(.*)sqrt\(([0-9.*/+-]+?)\)(.*)$/g, '$2');
+		var iStart = input.indexOf(subCalculation)-5;
+		var iEnd = input.indexOf(subCalculation) + subCalculation.length;
+		return MathExtractor.prototype.calculate(input.substr(0,iStart) + Math.sqrt(MathExtractor.prototype.calculate(subCalculation)) + input.substr(iEnd+1));
+	} else if(input.match(/^[0-9.*/+-]*\([0-9.*/+()-]+?\).*/)) {
+		var subCalculation = input.replace(/^(.*)\(([0-9.*/+-]+?)\)(.*)$/g, '$2');
+		var iStart = input.indexOf(subCalculation)-1;
+		var iEnd = input.indexOf(subCalculation) + subCalculation.length;
+		return MathExtractor.prototype.calculate(input.substr(0,iStart) + MathExtractor.prototype.calculate(subCalculation) + input.substr(iEnd+1));
 	} else if(input.match(/[0-9.]+\+.*/)) {
 		var i = input.indexOf('+');
 		return MathExtractor.prototype.calculate(input.substr(0, i)) +
@@ -43,6 +45,9 @@ MathExtractor.prototype.calculate = function(input) {
 		return MathExtractor.prototype.calculate(input.substr(0, i)) /
 				MathExtractor.prototype.calculate(input.substr(i+1));
 	} else {
-		return parseFloat(input.trim());
+		if(input.match(/[^0-9.]/))
+			return Number.NaN;
+		else
+			return parseFloat(input.trim());
 	}
 };
