@@ -4,6 +4,7 @@ var Extractor = function(name) {
 Extractor.prototype = {
   name: 'Extractor',
   results: [],
+  busy: false,
   init: function() {},
   extract: function(query) {}
 };

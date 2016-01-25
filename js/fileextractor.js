@@ -52,7 +52,7 @@ FileExtractor.extract = function(query) {
 				var r = new Result(FileExtractor.files[i].getFilename());
 				// set weight according to a filenames length, usually important files have brief, pregnant names
 				// but make sure we never go below 0 weight
-				r.setWeight(70 - Math.min(70, FileExtractor.files[i].getFilename().length));
+				r.setWeight(100 - Math.min(70, FileExtractor.files[i].getFilename().length));
 				r.setDescription(FileExtractor.files[i].getPath());
 				r.action = function() {
 					FileExtractor.shell.openItem(this.getDescription());
