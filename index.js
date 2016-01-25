@@ -12,16 +12,16 @@ app.on('window-all-closed', function() {
 });
 
 app.on('ready', function() {
+	var config = require('./config');
 	mainWindow = new BrowserWindow({
     width: 800,
     height: 101,
-    show: true,
+    show: config.visibleOnStart,
     resizable: false,
     'always-on-top': true
   });
   mainWindow.setMenuBarVisibility(false);
 	mainWindow.loadURL('file://' + __dirname + '/index.html');
-  var config = require('./config');
   globalShortcut.register(config.shortcut, function() {
     if(mainWindow.isVisible())
       mainWindow.hide();

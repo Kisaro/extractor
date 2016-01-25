@@ -1,5 +1,6 @@
 var config = {};
 
+config.visibleOnStart = true;
 config.shortcut = 'Alt+Space';
 config.indexingPaths = [
   'C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs',
