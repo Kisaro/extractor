@@ -38,7 +38,6 @@ var App = {
 			}
 			// up arrow
 			else if(event.keyCode === 38) {
-				event.preventDefault();
 				if(App.results.length > 0) {
 					document.getElementById('results').getElementsByTagName('li')[App.resultIndex--].className = '';
 					if(App.resultIndex < 0)
@@ -49,7 +48,6 @@ var App = {
 			}
 			//down arrow
 			else if(event.keyCode === 40) {
-				event.preventDefault();
 				if(App.results.length > 0) {
 					document.getElementById('results').getElementsByTagName('li')[App.resultIndex++].className = '';
 					if(App.resultIndex >= App.results.length)
@@ -59,7 +57,6 @@ var App = {
 			}
 			// ESC
 			else if(event.keyCode === 27) {
-				event.preventDefault();
 				App.win.hide();
 			}
 			else {
@@ -75,6 +72,13 @@ var App = {
 				App.renderResults();
 			}
 		});
+		// Prevent cursor from moving when pressing up/down arrow
+		search.addEventListener("keydown", function(e) {
+	  	if (e.keyCode === 38 || e.keyCode === 40) {
+				e.preventDefault();
+				return false;
+			}
+		}, false);
 	}
 };
 App.init();
