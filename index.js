@@ -28,7 +28,7 @@ app.on('ready', function() {
     else
       mainWindow.show();
   });
-	mainWindow.webContents.openDevTools();
+	//mainWindow.webContents.openDevTools();
 	mainWindow.on('closed', function() {
 		mainWindow = null;
 	});

@@ -1,70 +1,88 @@
-var FileExtractor = function() {};
-FileExtractor.prototype.name = 'FileExtractor';
-FileExtractor.prototype.results = [];
-FileExtractor.prototype.files = [];
-FileExtractor.prototype.fs = null;
-FileExtractor.prototype.shell = null;
-FileExtractor.prototype.fileExtensions = [/.exe$/, /.lnk$/, /.mp3$/, /.wma$/, /.mkv$/, /.avi$/, /.wmv$/, /.mpg$/, /.mp4$/, /.wav$/, /.png$/, /.jpg$/, /.gif$/, /.pdf$/];
-FileExtractor.prototype.init = function() {
-	FileExtractor.prototype.fs = require('fs');
-	FileExtractor.prototype.shell = require('shell');
+var File = function(path){this.path = path};
+File.prototype = {
+	path: null,
+	getFilename: function() {
+		var p = require('path');
+		var pathparams = this.path.split(p.sep);
+		return pathparams[pathparams.length-1];
+	},
+	getPath: function() {
+		return this.path;
+	}
+};
+
+var FileExtractor = new Extractor('File');
+FileExtractor.files = [];
+FileExtractor.fs = null;
+FileExtractor.shell = null;
+FileExtractor.path = null;
+FileExtractor.fileExtensions = [/.exe$/, /.lnk$/, /.mp3$/, /.wma$/, /.mkv$/, /.avi$/, /.wmv$/, /.mpg$/, /.mp4$/, /.wav$/, /.png$/, /.jpg$/, /.gif$/, /.pdf$/];
+FileExtractor.init = function() {
+	FileExtractor.fs = require('fs');
+	FileExtractor.shell = require('shell');
+	FileExtractor.path = require('path');
 	var indexStart = Date.now();
 	var config = require('./config');
 	for(var i = 0; i < config.indexingPaths.length; i++)
-		FileExtractor.prototype.indexFiles(config.indexingPaths[i]);
-	console.log(FileExtractor.prototype.name + ': ' + FileExtractor.prototype.files.length + ' files indexed in ' + (Date.now() - indexStart)/1000.0 + 's.');
+		FileExtractor.indexFiles(config.indexingPaths[i]);
+	console.log(FileExtractor.name + ': ' + FileExtractor.files.length + ' files indexed in ' + (Date.now() - indexStart)/1000.0 + 's.');
 };
-FileExtractor.prototype.onkeyup = function(query) {
-	FileExtractor.prototype.results = [];
+FileExtractor.extract = function(query) {
+	FileExtractor.results = [];
 	var resultLimit = 10;
 	var subQueries = query.split(' ');
 	if(query.length > 0) {
-		if(query.toLowerCase() === 'settings') {
-			FileExtractor.prototype.results.push('Settings');
-		}
-		else
-			for(var i = 0; i < FileExtractor.prototype.files.length; i++) {
-				var matchAllQueries = true;
-				for(var j = 0; j < subQueries.length; j++)
-					if(FileExtractor.prototype.files[i].toLowerCase().indexOf(subQueries[j].toLowerCase()) === -1)
-						matchAllQueries = false;
-				if(FileExtractor.prototype.results.length >= resultLimit)
-					break;
-				else if(matchAllQueries)
-					FileExtractor.prototype.results.push(FileExtractor.prototype.files[i]);
+		if("settings".indexOf(query.toLowerCase()) >= 0 && query.length > 3) {
+			var r = new Result('Settings');
+			r.setDescription('Press Enter to access the configuration file of extractor.');
+			r.setWeight(90);
+			r.action = function() {
+				FileExtractor.shell.showItemInFolder(FileExtractor.fs.realpathSync('.') + FileExtractor.path.sep + 'config.js');
 			}
+			FileExtractor.results.push(r);
+		}
+		for(var i = 0; i < FileExtractor.files.length; i++) {
+			var matchAllQueries = true;
+			for(var j = 0; j < subQueries.length; j++)
+				if(FileExtractor.files[i].getPath().toLowerCase().indexOf(subQueries[j].toLowerCase()) === -1)
+					matchAllQueries = false;
+			if(FileExtractor.results.length >= resultLimit)
+				break;
+			else if(matchAllQueries) {
+				var r = new Result(FileExtractor.files[i].getFilename());
+				// set weight according to a filenames length, usually important files have brief, pregnant names
+				// but make sure we never go below 0 weight
+				r.setWeight(70 - Math.min(70, FileExtractor.files[i].getFilename().length));
+				r.setDescription(FileExtractor.files[i].getPath());
+				r.action = function() {
+					FileExtractor.shell.openItem(this.getDescription());
+				};
+				r.subaction = function() {
+					FileExtractor.shell.showItemInFolder(this.getDescription());
+				};
+				FileExtractor.results.push(r);
+			}
+		}
 	}
 };
-FileExtractor.prototype.onaction = function(query, index) {
-	var path = require('path');
-	if(query.toLowerCase() === 'settings')
-		FileExtractor.prototype.shell.showItemInFolder(FileExtractor.prototype.fs.realpathSync('.') + path.sep + 'config.js');
-	else if(index > -1 && index < FileExtractor.prototype.results.length)
-		FileExtractor.prototype.shell.openItem(FileExtractor.prototype.results[index]);
-};
-FileExtractor.prototype.onsubaction = function(query, index) {
-	if(index > -1 && index < FileExtractor.prototype.results.length)
-		FileExtractor.prototype.shell.showItemInFolder(FileExtractor.prototype.results[index]);
-};
-FileExtractor.prototype.indexFiles = function(path) {
-	var p = require('path');
-	var files = FileExtractor.prototype.fs.readdirSync(path);
+FileExtractor.indexFiles = function(path) {
+	var files = FileExtractor.fs.readdirSync(path);
 	for(var i = 0; i < files.length; i++) {
-		var fullpath = path + p.sep + files[i];
+		var fullpath = path + FileExtractor.path.sep + files[i];
 		try {
-			FileExtractor.prototype.fs.accessSync(fullpath);
+			FileExtractor.fs.accessSync(fullpath);
 		} catch(ex) {
 			continue;
 		}
-		var stats = FileExtractor.prototype.fs.statSync(fullpath);
+		var stats = FileExtractor.fs.statSync(fullpath);
 		if(stats.isFile())
-			for(var j = 0; j < FileExtractor.prototype.fileExtensions.length; j++) {
-				if(fullpath.match(FileExtractor.prototype.fileExtensions[j])) {
-					FileExtractor.prototype.files.push(fullpath);
+			for(var j = 0; j < FileExtractor.fileExtensions.length; j++) {
+				if(fullpath.match(FileExtractor.fileExtensions[j])) {
+					FileExtractor.files.push(new File(fullpath));
 					break;
 				}
 			}
 		else if(stats.isDirectory())
-			FileExtractor.prototype.indexFiles(fullpath);
+			FileExtractor.indexFiles(fullpath);
 	}
 };
