@@ -1,6 +1,6 @@
 var config = {
-	visibleOnStart: false,
-	shortcut: 'Ctrl+Space',
+	visibleOnStart: true,
+	shortcut: 'Alt+Space',
 	file: {
 		extensions: [/.exe$/, /.lnk$/, /.mp3$/, /.wma$/, /.mkv$/, /.avi$/, /.wmv$/, /.mpg$/, /.mp4$/, /.wav$/, /.png$/, /.jpg$/, /.gif$/, /.pdf$/, /.html$/, /.js$/, /.css$/, /.php$/],
 		paths: [
