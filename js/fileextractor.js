@@ -16,15 +16,16 @@ FileExtractor.files = [];
 FileExtractor.fs = null;
 FileExtractor.shell = null;
 FileExtractor.path = null;
-FileExtractor.fileExtensions = [/.exe$/, /.lnk$/, /.mp3$/, /.wma$/, /.mkv$/, /.avi$/, /.wmv$/, /.mpg$/, /.mp4$/, /.wav$/, /.png$/, /.jpg$/, /.gif$/, /.pdf$/];
+FileExtractor.fileExtensions = [];
 FileExtractor.init = function() {
 	FileExtractor.fs = require('fs');
 	FileExtractor.shell = require('shell');
 	FileExtractor.path = require('path');
 	var indexStart = Date.now();
 	var config = require('./config');
-	for(var i = 0; i < config.indexingPaths.length; i++)
-		FileExtractor.indexFiles(config.indexingPaths[i]);
+	FileExtractor.fileExtensions = config.file.extensions;
+	for(var i = 0; i < config.file.paths.length; i++)
+		FileExtractor.indexFiles(config.file.paths[i]);
 	console.log(FileExtractor.name + ': ' + FileExtractor.files.length + ' files indexed in ' + (Date.now() - indexStart)/1000.0 + 's.');
 };
 FileExtractor.extract = function(query) {
