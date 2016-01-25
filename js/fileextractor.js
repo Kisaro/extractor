@@ -67,7 +67,13 @@ FileExtractor.extract = function(query) {
 	}
 };
 FileExtractor.indexFiles = function(path) {
-	var files = FileExtractor.fs.readdirSync(path);
+	var files = null;
+	try {
+		files = FileExtractor.fs.readdirSync(path);
+	} catch(e) {
+		console.warn('FileExtractor: Path not found "' + path + '"');
+		return [];
+	}
 	for(var i = 0; i < files.length; i++) {
 		var fullpath = path + FileExtractor.path.sep + files[i];
 		try {
