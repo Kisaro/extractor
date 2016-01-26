@@ -20,6 +20,8 @@ app.on('ready', function() {
     resizable: false,
     'always-on-top': true
   });
+	var screenDimensions = electron.screen.getPrimaryDisplay().workAreaSize;
+	mainWindow.setPosition(parseInt((screenDimensions.width - mainWindow.getSize()[0])/2), parseInt(screenDimensions.height/8));
   mainWindow.setMenuBarVisibility(false);
 	mainWindow.loadURL('file://' + __dirname + '/index.html');
   globalShortcut.register(config.shortcut, function() {

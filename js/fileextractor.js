@@ -30,7 +30,7 @@ FileExtractor.init = function() {
 };
 FileExtractor.extract = function(query) {
 	FileExtractor.results = [];
-	var resultLimit = 10;
+	var resultLimit = 15;
 	var subQueries = query.split(' ');
 	if(query.length > 0) {
 		if("settings".indexOf(query.toLowerCase()) >= 0 && query.length > 3) {

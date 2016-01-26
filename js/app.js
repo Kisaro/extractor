@@ -9,7 +9,7 @@ var App = {
 		App.search = document.getElementById('search');
 		App.extractors.push(MathExtractor);
 		App.extractors.push(FileExtractor);
-		//App.extractors.push(GoogleExtractor);
+		App.extractors.push(GoogleExtractor);
 		for(var i = 0; i < App.extractors.length; i++) {
 			App.extractors[i].init();
 		}
@@ -19,6 +19,18 @@ var App = {
 	renderResults: function() {
 		var results = document.getElementById('results');
 		var renderedResults = '';
+		// Make sure to get _all_ results
+		App.results = [];
+		App.resultIndex = 0;
+		for(var i = 0; i < App.extractors.length; i++)
+			App.results = App.results.concat(App.extractors[i].results);
+
+		// sort results according to their weight
+		App.results.sort(function(a,b) {
+			return b.getWeight() - a.getWeight();
+		});
+
+		// finally, render the results
 		for(var i = 0; i < App.results.length; i++) {
 			renderedResults += '<li><h1>' + App.results[i].getTitle() + '</h1><div>' + App.results[i].getDescription() + '</div></li>';
 		}
@@ -27,7 +39,8 @@ var App = {
 			results.getElementsByTagName('li')[App.resultIndex].className = 'selected';
 
 		var baseHeight = 101;
-		App.win.setSize(App.win.getSize()[0], baseHeight + App.results.length * 60 + (App.results.length > 1 ? 10 : 0));
+		var newHeight = baseHeight + App.results.length * 80 + (App.results.length > 1 ? 10 : 0);
+		App.win.setSize(App.win.getSize()[0], (newHeight > baseHeight + 810 ? baseHeight + 810 : newHeight));
 	},
 	controls: function() {
 		App.search.addEventListener('keyup', function(event) {
@@ -47,6 +60,8 @@ var App = {
 					if(App.resultIndex < 0)
 						App.resultIndex = 0;
 					document.getElementById('results').getElementsByTagName('li')[App.resultIndex].className = 'selected';
+					if(App.results.length > 10)
+						document.getElementById('results').getElementsByTagName('li')[App.resultIndex-Math.min(9, App.resultIndex)].scrollIntoView({behaviour: 'smooth', block: 'end'});
 				}
 
 			}
@@ -57,6 +72,8 @@ var App = {
 					if(App.resultIndex >= App.results.length)
 						App.resultIndex = App.results.length-1;
 					document.getElementById('results').getElementsByTagName('li')[App.resultIndex].className = 'selected';
+					if(App.resultIndex > 8)
+						document.getElementById('results').getElementsByTagName('li')[App.resultIndex-9].scrollIntoView({behaviour: 'smooth', block: 'end'});
 				}
 			}
 			// ESC
@@ -64,34 +81,9 @@ var App = {
 				App.win.hide();
 			}
 			else {
-				App.results = [];
-				App.resultIndex = 0;
 				for(var i = 0; i < App.extractors.length; i++) {
 					App.extractors[i].extract(App.search.value.trim());
-
-					// ----[start] Late resolve results - work in progress ---
-					if(!App.extractors[i].busy)
-						App.results = App.results.concat(App.extractors[i].results);
-					else {
-						var index = i;
-						var resolveBusyExtractor = function() {
-							if(App.extractors[index].busy)
-								window.setTimeout(resolveBusyExtractor, 500);
-							else {
-								App.results = App.results.concat(App.extractors[index].results);
-								App.results.sort(function(a,b) {
-									return b.getWeight() - a.getWeight();
-								});
-								App.renderResults();
-							}
-						};
-						window.setTimeout(resolveBusyExtractor, 500);
-					}
-					// ----[end] Late resolve results -----------------------
 				}
-				App.results.sort(function(a,b) {
-					return b.getWeight() - a.getWeight();
-				});
 				App.renderResults();
 			}
 		});
