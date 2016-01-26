@@ -71,25 +71,23 @@ FileExtractor.indexFiles = function(path) {
 	try {
 		files = FileExtractor.fs.readdirSync(path);
 	} catch(e) {
-		console.warn('FileExtractor: Path not found "' + path + '"');
+		console.warn('FileExtractor: Can not open "' + path + '"');
 		return [];
 	}
 	for(var i = 0; i < files.length; i++) {
 		var fullpath = path + FileExtractor.path.sep + files[i];
-		try {
-			FileExtractor.fs.accessSync(fullpath);
-		} catch(ex) {
-			continue;
-		}
-		var stats = FileExtractor.fs.statSync(fullpath);
-		if(stats.isFile())
-			for(var j = 0; j < FileExtractor.fileExtensions.length; j++) {
-				if(fullpath.match(FileExtractor.fileExtensions[j])) {
-					FileExtractor.files.push(new File(fullpath));
-					break;
+		if(FileExtractor.fs.existsSync(fullpath)) {
+			var stats = FileExtractor.fs.statSync(fullpath);
+			if(stats.isFile())
+				for(var j = 0; j < FileExtractor.fileExtensions.length; j++) {
+					if(fullpath.match(FileExtractor.fileExtensions[j])) {
+						FileExtractor.files.push(new File(fullpath));
+						break;
+					}
 				}
+			else if(stats.isDirectory()) {
+				FileExtractor.indexFiles(fullpath);
 			}
-		else if(stats.isDirectory())
-			FileExtractor.indexFiles(fullpath);
+		}
 	}
 };
