@@ -9,6 +9,7 @@ The main purpose is to extract various kinds of data from different sources with
 For now these Extractors are available:
 - **MathExtractor**: Allows you to perform simple calculations. Press enter to copy the result to the clipboard.
 - **FileExtractor**: Find important files quickly, pressing enter will open the file with the default application, shift+enter opens its folder. You can specify important locations within the config.js.
+- **GoogleExtractor**: **_(Experimental, might disappear again)_** Show some information about your input based on Google Knowledge Graph.
 
 ## Installation
 You will need to have git and npm installed to build the Extractor application.
@@ -19,4 +20,4 @@ npm install
 ```
 Finally, you can start the application by entering `npm start`
 
-If you are looking to compile the application into a binary, please have a look at the great [electron-packager](https://github.com/maxogden/electron-packager) project. A simple build.sh to compile a windows executable using that packages is included in the repository.
+If you are looking to compile the application into a binary, please have a look at the great [electron-packager](https://github.com/maxogden/electron-packager) project. A simple build.sh to compile a windows executable using that packager is included in the repository.
