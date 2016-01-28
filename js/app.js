@@ -14,6 +14,7 @@ var App = {
 			App.extractors[i].init();
 		}
 		App.controls();
+		App.voiceControls();
 		search.focus();
 	},
 	renderResults: function() {
@@ -94,6 +95,54 @@ var App = {
 				return false;
 			}
 		}, false);
+	},
+	voiceControls: function() {
+		if(annyang) {
+			var config = require('./config.js');
+			annyang.addCommands({
+				'hey *query': function(query) {
+					if(!App.win.isVisible())
+						App.win.show();
+						App.search.value = query;
+						if ("createEvent" in document) {
+					    var evt = document.createEvent("HTMLEvents");
+					    evt.initEvent("keyup", false, true);
+					    App.search.dispatchEvent(evt);
+						}
+						else
+							App.search.fireEvent("onkeydown");
+				},
+				'down': function() {
+					if(App.results.length > 0) {
+						document.getElementById('results').getElementsByTagName('li')[App.resultIndex++].className = '';
+						if(App.resultIndex >= App.results.length)
+							App.resultIndex = App.results.length-1;
+						document.getElementById('results').getElementsByTagName('li')[App.resultIndex].className = 'selected';
+						if(App.resultIndex > 8)
+							document.getElementById('results').getElementsByTagName('li')[App.resultIndex-9].scrollIntoView({behaviour: 'smooth', block: 'end'});
+					}
+				},
+				'up': function() {
+					if(App.results.length > 0) {
+						document.getElementById('results').getElementsByTagName('li')[App.resultIndex--].className = '';
+						if(App.resultIndex < 0)
+							App.resultIndex = 0;
+						document.getElementById('results').getElementsByTagName('li')[App.resultIndex].className = 'selected';
+						if(App.results.length > 10)
+							document.getElementById('results').getElementsByTagName('li')[App.resultIndex-Math.min(9, App.resultIndex)].scrollIntoView({behaviour: 'smooth', block: 'end'});
+					}
+				},
+				'ok': function() {
+					if(App.search.value.length > 0 && App.results.length > 0) {
+						App.results[App.resultIndex].action();
+						App.win.hide();
+					}
+				}
+			});
+			annyang.start();
+		} else {
+			console.warn('Could not initialize voice controls');
+		}
 	}
 };
 App.init();
