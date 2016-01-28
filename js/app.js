@@ -97,8 +97,8 @@ var App = {
 		}, false);
 	},
 	voiceControls: function() {
-		if(annyang) {
-			var config = require('./config.js');
+		var config = require('./config.js');
+		if(config.voiceControl && annyang) {
 			annyang.addCommands({
 				'hey *query': function(query) {
 					if(!App.win.isVisible())
