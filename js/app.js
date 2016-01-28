@@ -104,17 +104,17 @@ var App = {
 			commands[hotWord] = function(query) {
 				if(!App.win.isVisible())
 					App.win.show();
-					App.search.value = query;
-					if ("createEvent" in document) {
-						var evt = document.createEvent("HTMLEvents");
-						evt.initEvent("keyup", false, true);
-						App.search.dispatchEvent(evt);
-					}
-					else
-						App.search.fireEvent("onkeydown");
+				App.search.value = query;
+				if ("createEvent" in document) {
+					var evt = document.createEvent("HTMLEvents");
+					evt.initEvent("keyup", false, true);
+					App.search.dispatchEvent(evt);
+				}
+				else
+					App.search.fireEvent("onkeydown");
 			};
 			commands['down'] = function() {
-				if(App.results.length > 0) {
+				if(App.results.length > 0 && App.win.isVisible()) {
 					document.getElementById('results').getElementsByTagName('li')[App.resultIndex++].className = '';
 					if(App.resultIndex >= App.results.length)
 						App.resultIndex = App.results.length-1;
@@ -124,7 +124,7 @@ var App = {
 				}
 			};
 			commands['up'] = function() {
-				if(App.results.length > 0) {
+				if(App.results.length > 0 && App.win.isVisible()) {
 					document.getElementById('results').getElementsByTagName('li')[App.resultIndex--].className = '';
 					if(App.resultIndex < 0)
 						App.resultIndex = 0;
@@ -134,7 +134,7 @@ var App = {
 				}
 			};
 			commands['ok'] = function() {
-				if(App.search.value.length > 0 && App.results.length > 0) {
+				if(App.search.value.length > 0 && App.results.length > 0 && App.win.isVisible()) {
 					App.results[App.resultIndex].action();
 					App.win.hide();
 				}
