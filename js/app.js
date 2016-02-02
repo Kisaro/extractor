@@ -39,7 +39,7 @@ var App = {
 		if(App.results.length > 0)
 			results.getElementsByTagName('li')[App.resultIndex].className = 'selected';
 
-		var baseHeight = 101;
+		var baseHeight = 64;
 		var newHeight = baseHeight + App.results.length * 80 + (App.results.length > 1 ? 10 : 0);
 		App.win.setSize(App.win.getSize()[0], (newHeight > baseHeight + 810 ? baseHeight + 810 : newHeight));
 	},

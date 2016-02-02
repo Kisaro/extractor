@@ -15,8 +15,9 @@ app.on('ready', function() {
 	var config = require('./config');
 	mainWindow = new BrowserWindow({
     width: 800,
-    height: 101,
+    height: 64,
     show: config.visibleOnStart,
+    useContentSize: true,
     resizable: false,
     'always-on-top': true
   });
