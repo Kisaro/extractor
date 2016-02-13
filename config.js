@@ -11,9 +11,6 @@ var config = {
 		  'E:\\Music',
 		  'E:\\Picture'
 		]
-	},
-	google: {
-		apiKey: 'AIzaSyCasRAkjoz_jV0M3NHgRlKHlNrpKUOcjM4' // Consider getting your own knowledgegraph api key for more quota
 	}
 }
 
