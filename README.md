@@ -9,7 +9,6 @@ The main purpose is to extract various kinds of data from different sources with
 For now these Extractors are available:
 - **MathExtractor**: Allows you to perform simple calculations. Press enter to copy the result to the clipboard.
 - **FileExtractor**: Find important files quickly, pressing enter will open the file with the default application, shift+enter opens its folder. You can specify important locations within the config.js.
-- **GoogleExtractor**: **_(Experimental, might disappear again)_** Show some information about your input based on Google Knowledge Graph.
 
 ## Use
 Extractor will try to come up with appropriate data while you type, you can select different results with up/down arrows.
