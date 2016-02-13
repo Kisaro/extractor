@@ -4,10 +4,9 @@ var App = {
 	win: null,
 	resultIndex: 0,
 	search: null,
-	baseHeight: 0,
+	baseHeight: 64,
 	init: function() {
 		App.win = require('remote').getCurrentWindow();
-		App.baseHeight = App.win.getSize()[1];
 		App.search = document.getElementById('search');
 		App.extractors.push(MathExtractor);
 		App.extractors.push(FileExtractor);
@@ -41,7 +40,7 @@ var App = {
 			results.getElementsByTagName('li')[App.resultIndex].className = 'selected';
 
 		var newHeight = App.baseHeight + App.results.length * 80 + (App.results.length > 1 ? 10 : 0);
-		App.win.setSize(App.win.getSize()[0], (newHeight > App.baseHeight + 810 ? App.baseHeight + 810 : newHeight));
+		App.win.setContentSize(App.win.getContentSize()[0], (newHeight > App.baseHeight + 810 ? App.baseHeight + 810 : newHeight));
 	},
 	controls: function() {
 		App.search.addEventListener('keyup', function(event) {

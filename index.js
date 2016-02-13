@@ -1,6 +1,8 @@
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
+const windowWidth = 800;
+const windowHeight = 64;
 
 var globalShortcut = require('global-shortcut');
 var mainWindow = null;
@@ -14,15 +16,15 @@ app.on('window-all-closed', function() {
 app.on('ready', function() {
 	var config = require('./config');
 	mainWindow = new BrowserWindow({
-    width: 800,
-    height: 44,
-    show: config.visibleOnStart,
     useContentSize: true,
+    width: windowWidth,
+    height: windowHeight,
+    show: config.visibleOnStart,
     resizable: false,
     'always-on-top': true
   });
 	var screenDimensions = electron.screen.getPrimaryDisplay().workAreaSize;
-	mainWindow.setPosition(parseInt((screenDimensions.width - mainWindow.getSize()[0])/2), parseInt(screenDimensions.height/8));
+	mainWindow.setPosition(parseInt((screenDimensions.width - mainWindow.getContentSize()[0])/2), parseInt(screenDimensions.height/8));
   mainWindow.setMenuBarVisibility(false);
 	mainWindow.loadURL('file://' + __dirname + '/index.html');
   globalShortcut.register(config.shortcut, function() {
@@ -31,6 +33,7 @@ app.on('ready', function() {
     else
       mainWindow.show();
   });
+	mainWindow.setContentSize(windowWidth, windowHeight);
 	//mainWindow.webContents.openDevTools();
 	mainWindow.on('closed', function() {
 		mainWindow = null;

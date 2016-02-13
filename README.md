@@ -12,7 +12,7 @@ For now these Extractors are available:
 
 ## Use
 Extractor will try to come up with appropriate data while you type, you can select different results with up/down arrows.
-Pressing Enter will perform a primary action on the result (e.g. opening a file or coping a calculation result to the clipboard), while some results might have a secondary action by pressing shift+enter (e.g. files won't open directly but open the folder they reside in).
+Pressing Enter will perform a primary action on the result (e.g. opening a file or copying a calculation result to the clipboard), while some results might have a secondary action by pressing shift+enter (e.g. files won't open directly but open the folder they reside in).
 Upon successfully performing a primary action, Extractor will hide in the background to get out of the way. You can bring it back any time by using the global shortcut found in config.js (Alt+Space by default)
 
 Additionally, Extractor can be controlled using voice. The hotwort "hey", will bring it up and any word following will be entered. You can select a result by saying "up" and "down" and perform its primary action by saying "ok".
