@@ -10,5 +10,7 @@ Result.prototype = {
   setWeight: function(weight) {this.weight = weight;},
   getWeight: function() {return this.weight},
   action: function() {console.warn('No action defined for result "' + this.title + '"');},
-  subaction: function() {console.warn('No subaction defined for result "' + this.title + '"');}
+  subaction: function() {console.warn('No subaction defined for result "' + this.title + '"');},
+  minimizeOnAction: false,
+  minimizeOnSubaction: false
 };

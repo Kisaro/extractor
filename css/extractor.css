@@ -71,6 +71,8 @@ ul#results {
 	color: #666;
 	margin: 5px 0 0;
 	transition: all .1s;
+	word-break: break-all;
+	overflow: hidden;
 }
 #results li div {
 	line-height: 12px;

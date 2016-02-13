@@ -40,6 +40,8 @@ FileExtractor.extract = function(query) {
 			r.action = function() {
 				FileExtractor.shell.showItemInFolder(FileExtractor.fs.realpathSync('.') + FileExtractor.path.sep + 'config.js');
 			}
+			r.minimizeOnAction = true;
+			r.minimizeOnSubaction = true;
 			FileExtractor.results.push(r);
 		}
 		for(var i = 0; i < FileExtractor.files.length; i++) {

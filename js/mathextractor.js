@@ -14,6 +14,7 @@ MathExtractor.extract = function(query) {
 		r.action = function() {
 			MathExtractor.clipboard.writeText(this.getTitle().toString());
 		}
+		r.minimizeOnAction = true;
 		MathExtractor.results.push(r);
 	}
 };

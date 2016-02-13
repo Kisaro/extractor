@@ -4,12 +4,13 @@ var App = {
 	win: null,
 	resultIndex: 0,
 	search: null,
+	baseHeight: 0,
 	init: function() {
 		App.win = require('remote').getCurrentWindow();
+		App.baseHeight = App.win.getSize()[1];
 		App.search = document.getElementById('search');
 		App.extractors.push(MathExtractor);
 		App.extractors.push(FileExtractor);
-		App.extractors.push(GoogleExtractor);
 		for(var i = 0; i < App.extractors.length; i++) {
 			App.extractors[i].init();
 		}
@@ -28,7 +29,7 @@ var App = {
 
 		// sort results according to their weight
 		App.results.sort(function(a,b) {
-			return b.getWeight() - a.getWeight();
+			return a.getWeight() - b.getWeight();
 		});
 
 		// finally, render the results
@@ -39,20 +40,22 @@ var App = {
 		if(App.results.length > 0)
 			results.getElementsByTagName('li')[App.resultIndex].className = 'selected';
 
-		var baseHeight = 64;
-		var newHeight = baseHeight + App.results.length * 80 + (App.results.length > 1 ? 10 : 0);
-		App.win.setSize(App.win.getSize()[0], (newHeight > baseHeight + 810 ? baseHeight + 810 : newHeight));
+		var newHeight = App.baseHeight + App.results.length * 80 + (App.results.length > 1 ? 10 : 0);
+		App.win.setSize(App.win.getSize()[0], (newHeight > App.baseHeight + 810 ? App.baseHeight + 810 : newHeight));
 	},
 	controls: function() {
 		App.search.addEventListener('keyup', function(event) {
 			// Enter key
-			if(event.keyCode === 13) {
-					if(event.shiftKey)
+			if(event.keyCode === 13 && App.results.length > 0) {
+					if(event.shiftKey) {
+						if(App.results[App.resultIndex].minimizeOnSubaction)
+							App.win.hide();
 						App.results[App.resultIndex].subaction();
-					else
+					} else {
+						if(App.results[App.resultIndex].minimizeOnAction)
+							App.win.hide();
 						App.results[App.resultIndex].action();
-
-					App.win.hide();
+					}
 			}
 			// up arrow
 			else if(event.keyCode === 38) {
@@ -96,6 +99,15 @@ var App = {
 			}
 		}, false);
 	},
+	triggerSearchEvent: function() {
+		if ("createEvent" in document) {
+			var evt = document.createEvent("HTMLEvents");
+			evt.initEvent("keyup", false, true);
+			App.search.dispatchEvent(evt);
+		}
+		else
+			App.search.fireEvent("onkeydown");
+	},
 	voiceControls: function() {
 		var config = require('./config.js');
 		if(config.voiceControl && annyang) {
@@ -105,13 +117,7 @@ var App = {
 				if(!App.win.isVisible())
 					App.win.show();
 				App.search.value = query;
-				if ("createEvent" in document) {
-					var evt = document.createEvent("HTMLEvents");
-					evt.initEvent("keyup", false, true);
-					App.search.dispatchEvent(evt);
-				}
-				else
-					App.search.fireEvent("onkeydown");
+				App.triggerSearchEvent();
 			};
 			commands['down'] = function() {
 				if(App.results.length > 0 && App.win.isVisible()) {

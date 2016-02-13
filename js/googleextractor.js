@@ -37,11 +37,14 @@ GoogleExtractor.lookup = function(query) {
             r.setDescription(items[i].result.description);
           else
             r.setDescription(items[i].result.detailedDescription.articleBody);
-          r.setWeight(items[i].resultScore/10);
+          r.setWeight(Math.min(90, items[i].resultScore/10));
           GoogleExtractor.results.push(r);
         }
         // These results will come in late, so we have to rerender once we're done
+        var oldIndex = App.resultIndex;
         App.renderResults();
+        if(oldIndex < App.results.length)
+          App.resultIndex = oldIndex;
       });
 
     }
