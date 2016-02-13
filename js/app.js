@@ -29,7 +29,7 @@ var App = {
 
 		// sort results according to their weight
 		App.results.sort(function(a,b) {
-			return a.getWeight() - b.getWeight();
+			return b.getWeight() - a.getWeight();
 		});
 
 		// finally, render the results
@@ -56,6 +56,7 @@ var App = {
 							App.win.hide();
 						App.results[App.resultIndex].action();
 					}
+					App.search.select();
 			}
 			// up arrow
 			else if(event.keyCode === 38) {
@@ -141,8 +142,10 @@ var App = {
 			};
 			commands['ok'] = function() {
 				if(App.search.value.length > 0 && App.results.length > 0 && App.win.isVisible()) {
+					if(App.results[App.resultIndex].minimizeOnAction)
+						App.win.hide();
 					App.results[App.resultIndex].action();
-					App.win.hide();
+					App.search.select();
 				}
 			};
 			annyang.addCommands(commands);

@@ -46,16 +46,23 @@ FileExtractor.extract = function(query) {
 		}
 		for(var i = 0; i < FileExtractor.files.length; i++) {
 			var matchAllQueries = true;
-			for(var j = 0; j < subQueries.length; j++)
-				if(FileExtractor.files[i].getPath().toLowerCase().indexOf(subQueries[j].toLowerCase()) === -1)
+			var weight = 0;
+			for(var j = 0; j < subQueries.length; j++) {
+				if(FileExtractor.files[i].getPath().toLowerCase().indexOf(subQueries[j].toLowerCase()) === -1) {
 					matchAllQueries = false;
+				} else {
+						// each occurence of a subquery adds 10 weight (making it more important)
+						weight += (FileExtractor.files[i].getPath().toLowerCase().match(new RegExp(subQueries[j].toLowerCase(), "g")) || []).length * 10;
+				}
+			}
 			if(FileExtractor.results.length >= resultLimit)
 				break;
 			else if(matchAllQueries) {
 				var r = new Result(FileExtractor.files[i].getFilename());
-				// set weight according to a filenames length, usually important files have brief, pregnant names
-				// but make sure we never go below 0 weight
-				r.setWeight(100 - Math.min(70, FileExtractor.files[i].getFilename().length));
+				// Additionally, shorter paths are usually more important than long ones:
+				weight += Math.max(0, (200 - FileExtractor.files[i].getPath().length)*0.25);
+				weight = Math.min(100, weight); // cap at 100 weight though
+				r.setWeight(weight);
 				r.setDescription(FileExtractor.files[i].getPath());
 				r.action = function() {
 					FileExtractor.shell.openItem(this.getDescription());
@@ -63,6 +70,8 @@ FileExtractor.extract = function(query) {
 				r.subaction = function() {
 					FileExtractor.shell.showItemInFolder(this.getDescription());
 				};
+				r.minimizeOnAction = true;
+				r.minimizeOnSubaction = true;
 				FileExtractor.results.push(r);
 			}
 		}
