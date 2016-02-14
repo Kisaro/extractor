@@ -1,3 +1,5 @@
+var Result = require('./js/result');
+var Extractor = require('./js/extractor');
 var App = {
 	extractors: [],
 	results: [],
@@ -8,11 +10,28 @@ var App = {
 	init: function() {
 		App.win = require('remote').getCurrentWindow();
 		App.search = document.getElementById('search');
-		App.extractors.push(MathExtractor);
-		App.extractors.push(FileExtractor);
-		for(var i = 0; i < App.extractors.length; i++) {
-			App.extractors[i].init();
+
+		// autoload all modules that are an instance of Extractor and initialize them
+		var fs = require('fs');
+		var files = [];
+		try {
+			files = fs.readdirSync(__dirname + '/js');
+		} catch(e) {
+			console.error('Cannot access /js directory');
 		}
+
+		for(var i = 0; i < files.length; i++)
+			if(files[i].match(/[A-Z]+extractor.js$/i)) {
+				var ext = require('./js/'+files[i])
+				if(ext instanceof Extractor) {
+					ext.init();
+					App.extractors.push(ext);
+					console.log(ext.getName() + ' loaded.');
+				} else {
+					console.warn('Skipped invalid extractor: '+files[i]);
+				}
+			}
+
 		App.controls();
 		App.voiceControls();
 		search.focus();

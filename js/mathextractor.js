@@ -56,3 +56,5 @@ MathExtractor.calculate = function(input) {
 			return parseFloat(input.trim());
 	}
 };
+
+module.exports = MathExtractor;

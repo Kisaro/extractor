@@ -14,3 +14,5 @@ Result.prototype = {
   minimizeOnAction: false,
   minimizeOnSubaction: false
 };
+
+module.exports = Result;

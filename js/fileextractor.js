@@ -22,7 +22,7 @@ FileExtractor.init = function() {
 	FileExtractor.shell = require('shell');
 	FileExtractor.path = require('path');
 	var indexStart = Date.now();
-	var config = require('./config');
+	var config = require('../config');
 	FileExtractor.fileExtensions = config.file.extensions;
 	for(var i = 0; i < config.file.paths.length; i++)
 		FileExtractor.indexFiles(config.file.paths[i]);
@@ -38,7 +38,7 @@ FileExtractor.extract = function(query) {
 			r.setDescription('Press Enter to access the configuration file of extractor.');
 			r.setWeight(90);
 			r.action = function() {
-				FileExtractor.shell.showItemInFolder(FileExtractor.fs.realpathSync('.') + FileExtractor.path.sep + 'config.js');
+				FileExtractor.shell.showItemInFolder(FileExtractor.fs.realpathSync(__dirname + FileExtractor.path.sep + '..' + FileExtractor.path.sep + 'config.js'));
 			}
 			r.minimizeOnAction = true;
 			r.minimizeOnSubaction = true;
@@ -102,3 +102,5 @@ FileExtractor.indexFiles = function(path) {
 		}
 	}
 };
+
+module.exports = FileExtractor;
