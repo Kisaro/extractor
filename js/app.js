@@ -7,6 +7,7 @@ var App = {
 	resultIndex: 0,
 	search: null,
 	baseHeight: 64,
+	searchByVoice: false,
 	init: function() {
 		App.win = require('remote').getCurrentWindow();
 		App.search = document.getElementById('search');
@@ -63,6 +64,7 @@ var App = {
 	},
 	controls: function() {
 		App.search.addEventListener('keyup', function(event) {
+			App.searchByVoice = false;
 			// Enter key
 			if(event.keyCode === 13 && App.results.length > 0) {
 					if(event.shiftKey) {
@@ -127,6 +129,14 @@ var App = {
 		else
 			App.search.fireEvent("onkeydown");
 	},
+	speak: function(text) {
+		var config = require('./config.js');
+		if(config.voiceResponse && speechSynthesis) {
+			var message = new SpeechSynthesisUtterance(text);
+			message.voice = speechSynthesis.getVoices()[0];
+			speechSynthesis.speak(message);
+		}
+	},
 	voiceControls: function() {
 		var config = require('./config.js');
 		if(config.voiceControl && annyang) {
@@ -137,6 +147,7 @@ var App = {
 					App.win.show();
 				App.search.value = query;
 				App.triggerSearchEvent();
+				App.searchByVoice = true;
 			};
 			commands['down'] = function() {
 				if(App.results.length > 0 && App.win.isVisible()) {
@@ -167,7 +178,7 @@ var App = {
 				}
 			};
 			annyang.addCommands(commands);
-			annyang.start();
+			annyang.start({continuous: false});
 		} else {
 			console.warn('Could not initialize voice controls');
 		}

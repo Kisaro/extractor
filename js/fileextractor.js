@@ -65,9 +65,11 @@ FileExtractor.extract = function(query) {
 				r.setWeight(weight);
 				r.setDescription(FileExtractor.files[i].getPath());
 				r.action = function() {
+					App.speak('Opening ' + this.getTitle());
 					FileExtractor.shell.openItem(this.getDescription());
 				};
 				r.subaction = function() {
+					App.speak('Opening folder of ' + this.getTitle());
 					FileExtractor.shell.showItemInFolder(this.getDescription());
 				};
 				r.minimizeOnAction = true;
