@@ -178,6 +178,7 @@ var App = {
 				}
 			};
 			annyang.addCommands(commands);
+			annyang.setLanguage('en-US');
 			annyang.start({continuous: false});
 		} else {
 			console.warn('Could not initialize voice controls');
