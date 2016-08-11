@@ -9,7 +9,7 @@ var App = {
 	baseHeight: 64,
 	searchByVoice: false,
 	init: function() {
-		App.win = require('remote').getCurrentWindow();
+		App.win = require('electron').remote.getCurrentWindow();
 		App.search = document.getElementById('search');
 
 		// autoload all modules that are an instance of Extractor and initialize them

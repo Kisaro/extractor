@@ -1,7 +1,7 @@
 var MathExtractor = new Extractor('Math');
 MathExtractor.clipboard = null;
 MathExtractor.init = function() {
-	MathExtractor.clipboard = require('clipboard');
+	MathExtractor.clipboard = require('electron').clipboard;
 };
 MathExtractor.extract = function(query) {
 	MathExtractor.results = [];

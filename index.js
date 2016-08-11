@@ -1,11 +1,12 @@
 const electron = require('electron');
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
+const {app, BrowserWindow, globalShortcut, Tray, Menu} = electron;
 const windowWidth = 800;
 const windowHeight = 64;
 
-var globalShortcut = require('global-shortcut');
 var mainWindow = null;
+
+
+app.commandLine.appendSwitch('enable-speech-dispatcher');
 
 app.on('window-all-closed', function() {
 	if(process.platform != 'darwin') {
@@ -38,4 +39,21 @@ app.on('ready', function() {
 	mainWindow.on('closed', function() {
 		mainWindow = null;
 	});
+
+	var tray = new Tray(electron.nativeImage.createEmpty());
+	tray.setToolTip('Extractor');
+	tray.setContextMenu(Menu.buildFromTemplate([
+		{
+			label: 'Open',
+			click: function() {
+				if(!mainWindow.isVisible())
+					mainWindow.show();
+			}
+		}, {
+			label: 'Exit',
+			click: function() {
+				app.quit();
+			}
+		}
+	]));
 });
