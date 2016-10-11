@@ -7,7 +7,7 @@
     "start": "node_modules/.bin/electron ."
   },
   "devDependencies": {
-    "electron-prebuilt": "1.3.x",
+    "electron-prebuilt": "1.4.x",
     "request": "*"
   }
 }

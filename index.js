@@ -5,7 +5,7 @@ const windowHeight = 64;
 
 var mainWindow = null;
 
-
+process.env.GOOGLE_API_KEY = 'AIzaSyCasRAkjoz_jV0M3NHgRlKHlNrpKUOcjM4';
 app.commandLine.appendSwitch('enable-speech-dispatcher');
 
 app.on('window-all-closed', function() {
