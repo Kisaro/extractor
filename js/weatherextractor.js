@@ -18,11 +18,15 @@ WeatherExtractor.extract = function(query) {
 			result.setDescription('Please try again later');
 			result.setWeight(100);
 			this.results.push(result);
+			WeatherExtractor.getLocation();
 			App.renderResults();
 		} else {
 			var result = new Result(this.degrees + '°C in ' + this.locationName);
-			result.setDescription('<img width="32" height="32" src="https://www.metaweather.com/static/img/weather/png/64/' + this.image + '.png">');
+			result.setDescription('<img width="32" height="32" src="https://www.metaweather.com/static/img/weather/png/64/' + this.image + '.png"> <span style="font-size: 12px;font-weight: bold">data by MetaWeather.com</span>');
 			result.setWeight(100);
+			result.action = function() {
+				require('electron').shell.openExternal('https://www.metaweather.com/');
+			};
 			this.results = [];
 			this.results.push(result);
 			App.renderResults();
